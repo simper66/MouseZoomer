@@ -1,0 +1,13 @@
+*.zip
+*.log
+*.iml
+.idea/
+.directory
+.gradle
+build/
+docker-image
+version
+.cache
+.history
+.lib/
+dist/*
