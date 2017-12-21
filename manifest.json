@@ -4,7 +4,7 @@
   
   "name": "MouseZoomer",
   "short_name": "MouseZoomer",
-  "version": "1.0",
+  "version": "2.0",
   "description": "Zoom IN/OUT with the mouse clicking left or right button + wheel UP/DOWN",
 
   "permissions": ["tabs","storage"],
