@@ -5,24 +5,45 @@ var mouseZoomerSteps = 20;
 
 var isMouseButtonDown = [false, false, false, false, false, false, false, false, false];
 
+var zoomMade = false;
+var resetMade = false;
+var blockContextMenu = false;
+
 document.body.onmousedown = function(buttonEvent) {
     isMouseButtonDown[buttonEvent.button] = true;
-    tryReset(buttonEvent);
+    reset(buttonEvent);
 };
 
 document.body.onmouseup = function(buttonEvent) {
+    if ( (buttonEvent.button==2) && (resetMade || (zoomMade && (buttonEvent.button==mouseZoomerButton))) ){
+        zoomMade = false;
+        resetMade = false;
+        blockContextMenu = true;
+    }
     isMouseButtonDown[buttonEvent.button] = false;
-    tryReset(buttonEvent);
+    reset(buttonEvent);
 }
 
-function tryReset(buttonEvent){
+function reset(buttonEvent){
     if (mouseZoomerReset && isMouseButtonDown[0] && isMouseButtonDown[2]) {
+        resetMade = true;
         browser.runtime.sendMessage({"doReset": true});
     }
 }
 
+function disableContextMenu(contextMenuEvent) {
+    if (blockContextMenu) {
+        contextMenuEvent.stopPropagation();
+        //contextMenuEvent.preventDefault();
+        blockContextMenu = false;
+        return false;
+    }
+    return true;
+}
+
 function doZoom(wheelEvent){
     if (isMouseButtonDown[mouseZoomerButton] && wheelEvent.detail != 0) {
+        zoomMade = true;
         wheelEvent.preventDefault();
         if (wheelEvent.detail>0) {
             browser.runtime.sendMessage({"doZoom": (mouseZoomerInvert?"In":"Out"), "steps": mouseZoomerSteps});
@@ -37,10 +58,13 @@ function optionsChanged(changes, area){
         mouseZoomerButton = changes.mouseZoomerButton.newValue;
     }
     if (changes.mouseZoomerReset) {
-        mouseZoomerButton = changes.mouseZoomerReset.newValue;
+        mouseZoomerReset = changes.mouseZoomerReset.newValue;
     }
     if (changes.mouseZoomerInvert) {
-        mouseZoomerButton = changes.mouseZoomerInvert.newValue;
+        mouseZoomerInvert = changes.mouseZoomerInvert.newValue;
+    }
+    if (changes.mouseZoomerSteps) {
+        mouseZoomerSteps = changes.mouseZoomerSteps.newValue;
     }
 }
 
@@ -69,5 +93,7 @@ browser.storage.local.get({ mouseZoomerInvert: false}).then(initMouseZoomerInver
 browser.storage.local.get({ mouseZoomerSteps: 20}).then(initMouseZoomerSteps, onError);
 
 document.addEventListener("DOMMouseScroll", doZoom, false);
+//document.addEventListener("contextmenu", disableContextMenu, false);
+document.oncontextmenu = disableContextMenu;
 
 browser.storage.onChanged.addListener(optionsChanged);
