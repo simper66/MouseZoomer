@@ -5,6 +5,10 @@ function getCurrentWindowTab() {
     return browser.tabs.query({active: true, currentWindow: true});
 }
 
+function setZoom(zoom) {
+    return Math.max(Math.min(zoom, MAX_ZOOM), MIN_ZOOM);
+}
+
 function doZoomIn(currentZoom, steps) {
     return Math.min(currentZoom + steps, MAX_ZOOM);
 }
@@ -16,8 +20,8 @@ function doZoomOut(currentZoom, steps) {
 function callOnActiveTab(action) {
     getCurrentWindowTab().then((tab) => {
         browser.tabs.getZoom(tab.id).then((currentZoom) => {
-            if (action.doReset) {
-                browser.tabs.setZoom(tab.id, 1);
+            if (action.resetTo) {
+                browser.tabs.setZoom(tab.id, setZoom(action.resetTo/100));
             } else if (action.doZoom == "In") {
                 browser.tabs.setZoom(tab.id, doZoomIn(currentZoom, action.steps/100));
             } else if (action.doZoom == "Out") {

@@ -13,8 +13,10 @@
 
             <br>
 
-            <input type="checkbox" name="mouseZoomerReset"> Reset zoom with LEFT+RIGHT click<br><br>
-
+            <!--input type="checkbox" name="mouseZoomerReset"> Reset zoom with LEFT+RIGHT click<br><br-->
+            <input type="checkbox" name="mouseZoomerLeftRightEnabled"><input type="number" name="mouseZoomerLeftRight" step="1" min="1" max="300" value="150">When left+right reset zoom to: <br><br>
+            <input type="checkbox" name="mouseZoomerRightLeftEnabled"><input type="number" name="mouseZoomerRightLeft" step="1" min="1" max="300" value="100">When right+left reset zoom to: <br><br>
+            
             <input type="checkbox" name="mouseZoomerInvert"> Invert wheel direction<br><br>
 
             <input type="number" name="mouseZoomerSteps" step="1" min="1" max="100" value="20">Zoom steps<br><br>
